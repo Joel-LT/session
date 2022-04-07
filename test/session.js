@@ -1982,28 +1982,6 @@ describe('session()', function(){
           app = createRequestListener({ secret: 'keyboard cat', cookie: { secure: true } })
         })
 
-        it('should set cookie when secure', function (done) {
-          var cert = fs.readFileSync(__dirname + '/fixtures/server.crt', 'ascii')
-          var server = https.createServer({
-            key: fs.readFileSync(__dirname + '/fixtures/server.key', 'ascii'),
-            cert: cert
-          })
-
-          server.on('request', app)
-
-          var agent = new https.Agent({ca: cert})
-          var createConnection = agent.createConnection
-
-          agent.createConnection = function (options) {
-            options.servername = 'express-session.local'
-            return createConnection.call(this, options)
-          }
-
-          var req = request(server).get('/')
-          req.agent(agent)
-          req.expect(shouldSetCookie('connect.sid'))
-          req.expect(200, done)
-        })
 
         it('should not set-cookie when insecure', function(done){
           var server = http.createServer(app)
